@@ -1,0 +1,65 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow:hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  text-align: center;
+}
+
+button {
+  cursor: pointer;
+}
+
+#divGeneral {
+  display: flex;
+  flex-flow: column;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.page-main {
+  /*background-color:black;*/
+}
+
+.page-header {
+  /*height: 10vh;*/
+  padding: 1px !important;
+  margin: 1px !important;
+}
+
+.page-footer {
+  height: 1px;
+  padding: 1px;
+  margin: 1px;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+   
+  .wrapper > * {
+    /*padding: 20px;*/
+  }
+   
+  .page-main {
+    flex-grow: 1;
+    padding: 20px;
+  }
+
+.title {
+  margin: 2px;
+  padding: 2px;
+}
