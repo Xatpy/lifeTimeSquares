@@ -8,11 +8,11 @@ window.onload = function() {
     }, 500);*/
 }
 
-const SQUARE_SIZE = 1;
+const SQUARE_SIZE = 25;
+let G_COUNTER_DAYS = 0; //Pass to reference
+const OFFSET_BORDERS = 10;
 
 function reportWindowSize() {
-    console.log("heigh: " + window.innerHeight);
-    console.log("width: " + window.innerWidth);
     const parentElement = document.getElementById("page-main");
     console.log("clientWidth: " + parentElement.clientWidth);
 
@@ -38,14 +38,76 @@ function reportWindowSize() {
     const totalDays = getNumberOfDaysSinceBirthday();
     const customerYears = totalDays / 365;
 
-    let maxY = 0;
+    const canvasWidth = ctx.canvas.width;
+    let size = calculateSquareSize(canvasWidth);
+    G_COUNTER_DAYS = 0;
+    let totalDaysCanvas = 40 * 365;
+    drawDaysAsSquares(ctx, size, totalDays, totalDaysCanvas);
+
+    /*let maxY = 0;
     for (let i = 0; i < 40; ++i) {
         let offY = maxY + offsetY + SQUARE_SIZE;
         maxY = drawOneYear(ctx, offsetX, offY, totalDays);
-    }
+    }*/
 }
 
-let G_COUNTER_DAYS = 0; //Pass to reference
+function calculateSquareSize(canvasWidth) {
+    const numbersOfSquares = 200;
+    let res = (canvasWidth - (2 * OFFSET_BORDERS)) / numbersOfSquares;
+    //res = res / numbersOfSquares;
+    return res;
+} 
+
+function drawDaysAsSquares(ctx, size, totalDays, totalDaysCanvas) {
+    const canvasWidth = ctx.canvas.width;
+    //const width = SQUARE_SIZE;
+    //const height = SQUARE_SIZE;
+    const width = size;
+    const height = size;
+    let offsetX = 2;
+    let offsetY = 2;
+    let counterX = 0;
+    let counterY = 0;
+    let maxY = 0;
+    const SEPARATION = 4;
+    for (let i = 0; i < totalDaysCanvas; ++i) {
+
+        G_COUNTER_DAYS += 1;
+
+        let x,y;
+        let tempX = counterX * (width + SEPARATION) + offsetX;
+        let tempY = counterY * (height + SEPARATION) + offsetY;
+
+        if (tempX + width + offsetX > canvasWidth) {
+            if (counterY === 0) {
+                console.log("Number of squares in first line" + G_COUNTER_DAYS)
+            }
+            counterX = 0;
+            counterY += 1;
+
+            tempX = counterX * (width + SEPARATION) + offsetX;
+            tempY = counterY * (height + SEPARATION) + offsetY;
+        }
+
+        counterX += 1;
+
+        x = tempX;
+        y = tempY;
+        if (y > maxY) {
+            maxY = y;
+        }
+
+        const drawColor = G_COUNTER_DAYS <= totalDays;
+
+        //console.log(`Square ${x} ${y}`);
+        ctx.beginPath();
+        ctx.fillStyle = drawColor ? "red" : "green";
+        ctx.rect(x, y, width, height);
+        ctx.fill();
+    }
+    return maxY;
+}
+
 
 function drawOneYear(ctx, offsetX, offsetY, customerYears) {
     const canvasWidth = ctx.canvas.width;
@@ -63,6 +125,7 @@ function drawOneYear(ctx, offsetX, offsetY, customerYears) {
         let tempY = counterY * (height + SEPARATION) + offsetY;
 
         if (tempX + width + offsetX > canvasWidth) {
+            //debugger
             counterX = 0;
             counterY += 1;
 
@@ -78,8 +141,7 @@ function drawOneYear(ctx, offsetX, offsetY, customerYears) {
             maxY = y;
         }
 
-        const drawColor = G_COUNTER_DAYS < customerYears;
-        debugger
+        const drawColor = G_COUNTER_DAYS <= customerYears;
 
         //console.log(`Square ${x} ${y}`);
         ctx.beginPath();
@@ -97,25 +159,6 @@ function click() {
     G_COUNTER_DAYS = 0;
     reportWindowSize();
     return;
-/*
-    let inputValue = document.getElementById("inputDate").value;
-    //debugger
-    var mdy = inputValue.split("-");
-    let convertedDate = new Date(mdy[0], mdy[1]-1, mdy[2]);
-    let days = datediff(convertedDate, parseDate(getTodaysDate()));
-    console.log("Days: " + days);
-    //getNumberOfDaysSinceBirthday();
-
-    /*var c = document.getElementById("canvas");
-    var ctx = c.getContext("2d");
-
-    var ctx = c.getContext("2d");
-    ctx.fillStyle = getRandomColor();
-    const x = getRandomNumber(canvas.width);
-    const y = getRandomNumber(canvas.height); 
-    const width = getRandomNumber(50);
-    const height = getRandomNumber(50);
-    ctx.fillRect(x, y, width, height);*/
 }
 
 function getRandomNumber(top) {
@@ -148,7 +191,7 @@ function getNumberOfDaysSinceBirthday() {
     var mdy = inputValue.split("-");
     let convertedDate = new Date(mdy[0], mdy[1]-1, mdy[2]);
     let days = datediff(convertedDate, parseDate(getTodaysDate()));
-    console.log(`Number of ${days}`);
+    //console.log(`Number of ${days}`);
     return days;
 }
 
